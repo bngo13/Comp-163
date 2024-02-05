@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS Address ( address_id INTEGER PRIMARY KEY, street TEXT, city TEXT, state TEXT, postal_code TEXT );
