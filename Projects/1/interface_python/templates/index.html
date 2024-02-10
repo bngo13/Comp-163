@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Address Book Management</title>
+</head>
+<body>
+    <h2>Add Address</h2>
+    <input type="text" id="addName" placeholder="Name">
+    <input type="text" id="addAddress" placeholder="Address">
+    <button onclick="addAddress()">Add Address</button>
+
+    <h2>Update Address</h2>
+    <input type="number" id="updateId" placeholder="Address ID">
+    <input type="text" id="updateName" placeholder="New Name">
+    <input type="text" id="updateAddress" placeholder="New Address">
+    <button onclick="updateAddress()">Update Bike</button>
+
+    <h2>Delete Address</h2>
+    <input type="number" id="deleteId" placeholder="Address ID">
+    <button onclick="deleteAddress()">Delete Bike</button>
+
+    <h2>Delete All Addresses</h2>
+    <button onclick="deleteAddressBook()">Delete All Address</button>
+
+    <h2>Address Book</h2>
+    <button onclick="getAddressBook()">Refresh Address List</button>
+    <ul id="addressList"></ul>
+
+    <script>
+        function getAddressBook() {
+            fetch('/addresses')
+                .then(response => response.json())
+                .then(data => {
+                    const list = document.getElementById('addressList');
+                    list.innerHTML = '';
+                    data.forEach(address => {
+                        const item = document.createElement('li');
+                        item.textContent = `ID: ${address.id}, Name: ${address.name}, Address: ${address.address}`;
+                        list.appendChild(item);
+                    });
+                });
+        }
+
+        function addAddress() {
+            const name = document.getElementById('addName').value;
+            const type = document.getElementById('addAddress').value;
+            fetch('/add_address', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({name: name, address: type}),
+            }).then(() => {
+                document.getElementById('addName').value = '';
+                document.getElementById('addAddress').value = '';
+                getAddressBook(); // Refresh the list
+            });
+        }
+
+        function updateAddress() {
+            const id = document.getElementById('updateId').value;
+            const name = document.getElementById('updateName').value;
+            const type = document.getElementById('updateAddress').value;
+            fetch(`/update_address/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({name: name, address: type}),
+            }).then(() => getAddressBook()); // Refresh the list
+        }
+
+        function deleteAddress() {
+            const id = document.getElementById('deleteId').value;
+            fetch(`/delete_address/${id}`, {
+                method: 'DELETE',
+            }).then(() => {
+                document.getElementById('deleteId').value = '';
+                getAddressBook(); // Refresh the list
+            });
+        }
+
+        function deleteAddressBook() {
+            fetch('/delete_address_book', {
+                method: 'DELETE',
+            }).then(() => getAddressBook()); // Refresh the list
+        }
+
+        // Initial load of bikes
+        getAddressBook();
+    </script>
+</body>
+</html>
