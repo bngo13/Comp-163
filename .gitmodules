@@ -1,0 +1,3 @@
+[submodule "Projects/2"]
+	path = Projects/2
+	url = git@github.com:bngo13/dbms-proj2.git
